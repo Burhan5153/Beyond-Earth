@@ -1,0 +1,94 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #2d1b4e 100%);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Dashboard specific styles */
+.dashboard-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-action-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(240, 147, 251, 0.3) !important;
+}
+
+.dashboard-action-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 45px rgba(240, 147, 251, 0.5);
+  border-color: rgba(240, 147, 251, 0.6) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Booking page */
+.booking-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+/* Activities page */
+.activities-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+.activity-card {
+  text-align: center;
+}
+
+/* Subscription page */
+.subscription-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+/* Land purchase page */
+.land-purchase-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+/* Premium content page */
+.premium-content-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+/* Auth pages */
+.auth-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+.auth-container {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+}

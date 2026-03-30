@@ -1,0 +1,21 @@
+version: '3.8'
+
+# Development override - enables hot-reload
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  # Backend with hot-reload
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    environment:
+      - NODE_ENV=development
+      # Use MongoDB container if MONGODB_URI not set, otherwise use provided URI (MongoDB Atlas)
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/beyond-earth}
+    volumes:
+      # Mount code for live updates
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev  # Use nodemon for auto-reload
+

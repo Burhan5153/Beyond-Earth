@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # MongoDB Service (with persistent volume)
+  mongodb:
+    image: mongo:7
+    container_name: beyond-earth-mongodb
+    # Expose on port 27018 to avoid conflict with local MongoDB (if running)
+    ports:
+      - "27018:27017"  # Access from host via localhost:27018
+    volumes:
+      # Persistent data storage - survives container restarts
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=beyond-earth
+    restart: unless-stopped
+    networks:
+      - beyond-earth-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: beyond-earth-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      # Use MongoDB container if MONGODB_URI not set, otherwise use provided URI (MongoDB Atlas)
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/beyond-earth}
+      - JWT_SECRET=${JWT_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      # Admin user credentials (optional - defaults provided in seed script)
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@beyondearth.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123456}
+      - ADMIN_NAME=${ADMIN_NAME:-Admin User}
+    restart: unless-stopped
+    networks:
+      - beyond-earth-network
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/api/activities', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Backend URL accessible from browser (use localhost or your domain)
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:5000/api}
+    container_name: beyond-earth-frontend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    networks:
+      - beyond-earth-network
+    depends_on:
+      - backend
+
+networks:
+  beyond-earth-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ipv6: "false"
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  # Named volume for MongoDB data persistence
+  mongodb_data:
+

@@ -1,0 +1,21 @@
+# Development Dockerfile for Frontend (with hot-reload)
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Expose React dev server port
+EXPOSE 3000
+
+# Set environment variable to allow external connections
+ENV HOST=0.0.0.0
+
+# Start React development server with hot-reload
+CMD ["npm", "start"]
+
