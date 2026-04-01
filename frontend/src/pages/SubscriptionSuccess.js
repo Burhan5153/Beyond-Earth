@@ -6,6 +6,7 @@ import api from '../services/api';
 import StarsBackground from '../components/StarsBackground';
 
 const SubscriptionSuccess = () => {
+  const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
   const [error, setError] = useState('');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
