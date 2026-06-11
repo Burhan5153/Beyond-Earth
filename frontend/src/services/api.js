@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://backend-production-2240.up.railway.app/api',
+  baseURL: import.meta.env.VITE_API_URL + '/api' || 'https://beyond-earth-81du.vercel.app/api',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -14,4 +14,3 @@ if (token) {
 }
 
 export default api;
-
