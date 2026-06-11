@@ -61,8 +61,7 @@ const activities = [
 
 async function seed() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/beyond-earth');
-
+await mongoose.connect('mongodb+srv://Burhan2380:Burhan786@cluster0.qgewidr.mongodb.net/beyond-earth');
     console.log('Connected to MongoDB');
 
     // Clear existing activities
