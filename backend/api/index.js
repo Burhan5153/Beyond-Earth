@@ -67,8 +67,15 @@ async function connectDB() {
 
 // Connect DB before every request
 app.use(async (req, res, next) => {
-  await connectDB();
-  next();
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    // ✅ Returns 503 instead of hanging forever
+    res.status(503).json({ 
+      message: 'Database connection failed. Please try again.' 
+    });
+  }
 });
 
 module.exports = app;
