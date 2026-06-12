@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+// ✅ Add this line
+mongoose.set('bufferCommands', false);
+
 const app = express();
 
 // Middleware
