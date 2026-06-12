@@ -42,36 +42,27 @@ app.use('/api/content', require('../routes/content'));
 app.use('/api/contact', require('../routes/contact'));
 app.use('/api/admin', require('../routes/admin'));
 
-// Replace your current connectDB function with this
-let isConnected = false;
-
 async function connectDB() {
-  if (isConnected && mongoose.connection.readyState === 1) return;
+  if (mongoose.connection.readyState >= 1) return;
   
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
-      maxPoolSize: 10,          // ← limit simultaneous connections
-      minPoolSize: 5,
+      maxPoolSize: 10,
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
-      bufferCommands: false,    // ← fail fast instead of buffering
     });
-    isConnected = true;
     console.log('MongoDB Connected');
   } catch (error) {
-    isConnected = false;
     console.error('MongoDB connection error:', error);
     throw error;
   }
 }
 
-// Connect DB before every request
 app.use(async (req, res, next) => {
   try {
     await connectDB();
     next();
   } catch (error) {
-    // ✅ Returns 503 instead of hanging forever
     res.status(503).json({ 
       message: 'Database connection failed. Please try again.' 
     });
