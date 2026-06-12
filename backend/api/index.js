@@ -42,17 +42,27 @@ app.use('/api/content', require('../routes/content'));
 app.use('/api/contact', require('../routes/contact'));
 app.use('/api/admin', require('../routes/admin'));
 
-// MongoDB connection (prevents multiple connections in serverless)
+// Replace your current connectDB function with this
 let isConnected = false;
 
 async function connectDB() {
-  if (isConnected) return;
-  await mongoose.connect(process.env.MONGODB_URI, {
-    serverSelectionTimeoutMS: 30000,
-    socketTimeoutMS: 30000,
-  });
-  isConnected = true;
-  console.log('MongoDB Connected');
+  if (isConnected && mongoose.connection.readyState === 1) return;
+  
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      maxPoolSize: 10,          // ← limit simultaneous connections
+      minPoolSize: 5,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      bufferCommands: false,    // ← fail fast instead of buffering
+    });
+    isConnected = true;
+    console.log('MongoDB Connected');
+  } catch (error) {
+    isConnected = false;
+    console.error('MongoDB connection error:', error);
+    throw error;
+  }
 }
 
 // Connect DB before every request
